@@ -40,6 +40,34 @@ public class ArrayList {
     }
 
     /**
+     * 数组越界异常
+     * @param index
+     */
+    private void outOfBounds(int index){
+        throw new IndexOutOfBoundsException("Index:"+index+", Size="+this.size);
+    }
+
+    /**
+     * 越界检查
+     * @param index
+     */
+    private void rangeCheck(int index){
+        if(index<0 || index>=this.size){
+            this.outOfBounds(index);
+        }
+    }
+
+    /**
+     * 添加的数组越界检查
+     * @param index
+     */
+    private void rangeCheckForAdd(int index){
+        if(index<0 || index>this.size){
+            this.outOfBounds(index);
+        }
+    }
+
+    /**
      * 清空列表
      */
     public void clear(){
@@ -76,7 +104,7 @@ public class ArrayList {
      * @param element
      */
     public void add(int element){
-
+        this.add(this.size(), element);
     }
 
     /**
@@ -85,9 +113,7 @@ public class ArrayList {
      * @return
      */
     public int get(int index){
-        if(index<0 || index>=this.size){
-            throw new IndexOutOfBoundsException("Index:"+index+", Size="+this.size);
-        }
+        this.rangeCheck(index);
 
         return this.elements[index];
     }
@@ -99,9 +125,7 @@ public class ArrayList {
      * @return 原来的元素
      */
     public int set(int index, int element){
-        if(index<0 || index>=this.size){
-            throw new IndexOutOfBoundsException("Index:"+index+", Size="+this.size);
-        }
+        this.rangeCheck(index);
         int old = this.elements[index];
         this.elements[index] = element;
         return old;
@@ -113,7 +137,14 @@ public class ArrayList {
      * @param element
      */
     public void add(int index, int element){
+        this.rangeCheckForAdd(index);
 
+        for(int i=size-1; i>=index; i--){
+            this.elements[i+1] = this.elements[i];
+        }
+
+        this.elements[index] = element;
+        this.size++;
     }
 
     /**
@@ -122,7 +153,13 @@ public class ArrayList {
      * @return
      */
     public int remove(int index){
-        return 0;
+        this.rangeCheck(index);
+        int old = this.elements[index];
+        for(int i=index+1; i<this.size; i++){
+            this.elements[i-1] = this.elements[i];
+        }
+        this.size--;
+        return old;
     }
 
 
@@ -139,5 +176,21 @@ public class ArrayList {
         }
 
         return INDEX_NOT_FOUND;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("ArrayList{");
+        sb.append("size=").append(size);
+        sb.append(", elements=");
+        if (elements == null) sb.append("null");
+        else {
+            sb.append('[');
+            for (int i = 0; i < size; ++i)
+                sb.append(i == 0 ? "" : ", ").append(elements[i]);
+            sb.append(']');
+        }
+        sb.append('}');
+        return sb.toString();
     }
 }
