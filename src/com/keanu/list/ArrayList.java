@@ -139,12 +139,33 @@ public class ArrayList {
     public void add(int index, int element){
         this.rangeCheckForAdd(index);
 
+        this.ensureCapacity(this.size+1);
+
         for(int i=size-1; i>=index; i--){
             this.elements[i+1] = this.elements[i];
         }
 
         this.elements[index] = element;
         this.size++;
+    }
+
+    /**
+     * 动态扩容
+     * @param capacity
+     */
+    public void ensureCapacity(int capacity){
+        int oldCapacity = this.elements.length;
+        if(oldCapacity>=capacity){
+            return;
+        }
+
+        int newCapacity = oldCapacity+oldCapacity>>2;
+        int[] newElements = new int[newCapacity];
+        for(int i=0; i<this.size; i++){
+            newElements[i] = this.elements[i];
+        }
+
+        this.elements = newElements;
     }
 
     /**
