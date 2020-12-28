@@ -1,6 +1,6 @@
 package com.keanu.list;
 
-public class ArrayList {
+public class ArrayList<E> {
 
     /**
      * 列表的大小
@@ -10,7 +10,7 @@ public class ArrayList {
     /**
      * 存放所有元素的数组
      */
-    private int[] elements;
+    private E[] elements;
 
     /**
      * 列表的默认容量
@@ -36,7 +36,7 @@ public class ArrayList {
      */
     public ArrayList(int capacity){
         capacity = (capacity<DEFAULT_CAPACITY)?DEFAULT_CAPACITY:capacity;
-        this.elements = new int[capacity];
+        this.elements = (E[]) new Object[capacity];
     }
 
     /**
@@ -71,6 +71,9 @@ public class ArrayList {
      * 清空列表
      */
     public void clear(){
+        for(int i=0; i<this.size; i++){
+            this.elements[i] = null;
+        }
         this.size = 0;
     }
 
@@ -95,7 +98,7 @@ public class ArrayList {
      * @param element
      * @return
      */
-    public boolean contains(int element){
+    public boolean contains(E element){
         return indexOf(element)!=INDEX_NOT_FOUND;
     }
 
@@ -103,7 +106,7 @@ public class ArrayList {
      * 将element元素添加到尾部
      * @param element
      */
-    public void add(int element){
+    public void add(E element){
         this.add(this.size(), element);
     }
 
@@ -112,7 +115,7 @@ public class ArrayList {
      * @param index
      * @return
      */
-    public int get(int index){
+    public E get(int index){
         this.rangeCheck(index);
 
         return this.elements[index];
@@ -124,9 +127,9 @@ public class ArrayList {
      * @param element
      * @return 原来的元素
      */
-    public int set(int index, int element){
+    public E set(int index, E element){
         this.rangeCheck(index);
-        int old = this.elements[index];
+        E old = this.elements[index];
         this.elements[index] = element;
         return old;
     }
@@ -136,7 +139,7 @@ public class ArrayList {
      * @param index
      * @param element
      */
-    public void add(int index, int element){
+    public void add(int index, E element){
         this.rangeCheckForAdd(index);
 
         this.ensureCapacity(this.size+1);
@@ -160,7 +163,7 @@ public class ArrayList {
         }
 
         int newCapacity = oldCapacity+oldCapacity>>2;
-        int[] newElements = new int[newCapacity];
+        E[] newElements = (E[]) new Object[newCapacity];
         for(int i=0; i<this.size; i++){
             newElements[i] = this.elements[i];
         }
@@ -173,13 +176,13 @@ public class ArrayList {
      * @param index
      * @return
      */
-    public int remove(int index){
+    public E remove(int index){
         this.rangeCheck(index);
-        int old = this.elements[index];
+        E old = this.elements[index];
         for(int i=index+1; i<this.size; i++){
             this.elements[i-1] = this.elements[i];
         }
-        this.size--;
+        this.elements[this.size--] = null;
         return old;
     }
 
@@ -189,13 +192,20 @@ public class ArrayList {
      * @param element
      * @return
      */
-    public int indexOf(int element){
-        for(int i=0; i<this.size; i++){
-            if(this.elements[i]==element){
-                return  i;
+    public int indexOf(E element){
+        if(element==null){
+            for(int i=0; i<this.size; i++){
+                if(this.elements[i] == null){
+                    return  i;
+                }
+            }
+        }else{
+            for(int i=0; i<this.size; i++){
+                if(element.equals(this.elements[i])){
+                    return  i;
+                }
             }
         }
-
         return INDEX_NOT_FOUND;
     }
 
